@@ -1,0 +1,21 @@
+[package]
+name = "cargo-fuzz-sandbox-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+[dependencies.cargo-fuzz-sandbox]
+path = ".."
+
+[[bin]]
+name = "branched_target"
+path = "fuzz_targets/branched_target.rs"
+test = false
+doc = false
+bench = false
