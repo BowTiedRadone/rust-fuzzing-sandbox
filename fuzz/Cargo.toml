@@ -19,3 +19,10 @@ path = "fuzz_targets/branched_target.rs"
 test = false
 doc = false
 bench = false
+
+[[bin]]
+name = "direct_pattern_target"
+path = "fuzz_targets/direct_pattern_target.rs"
+test = false
+doc = false
+bench = false
