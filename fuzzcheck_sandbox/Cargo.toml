@@ -1,0 +1,10 @@
+[package]
+name = "fuzzcheck_sandbox"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+
+[target.'cfg(fuzzing)'.dev-dependencies]
+fuzzcheck = { git = "https://github.com/loiclec/fuzzcheck-rs", rev = "efdb1f9b5943119456b91b671ca896b3ac50f833"}
