@@ -12,6 +12,8 @@ libfuzzer-sys = "0.4"
 
 [dependencies.cargo-fuzz-sandbox]
 path = ".."
+# Include the "testing" feature from the parent package.
+features = ["testing"]
 
 [[bin]]
 name = "branched_target"
@@ -23,6 +25,13 @@ bench = false
 [[bin]]
 name = "direct_pattern_target"
 path = "fuzz_targets/direct_pattern_target.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "feature_gating"
+path = "fuzz_targets/feature_gating.rs"
 test = false
 doc = false
 bench = false

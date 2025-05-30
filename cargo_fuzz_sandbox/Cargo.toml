@@ -3,4 +3,8 @@ name = "cargo-fuzz-sandbox"
 version = "0.1.0"
 edition = "2024"
 
+[features]
+# This feature is used the feature-gating fuzz target.
+testing = []
+
 [dependencies]
