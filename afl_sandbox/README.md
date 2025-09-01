@@ -14,7 +14,9 @@ Build the program using `cargo afl`:
 
 ```bash
 $ cd afl_sandbox
-$ cargo afl build
+# Build the binary using panic=abort to allow afl identify panics as crashes.
+# Check https://github.com/rust-fuzz/afl.rs/issues/499 for more context.
+$ RUSTFLAGS="-C panic=abort" cargo afl build
 ```
 
 Create an input(corpus) directory and add at least one input (seed). The sandbox already has an input directory containing a seed file:
@@ -27,10 +29,10 @@ seed1.txt
 Test the test cases from the `corpus` directory manually:
 
 ```bash
-$ cat ./corpus/test.txt
+$ cat ./corpus/seed1.txt
 test
 
-$ ./target/debug/afl-rust ./corpus/test.txt
+$ ./target/debug/afl-rust ./corpus/seed1.txt
 Buffer content: test
 ```
 
