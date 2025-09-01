@@ -1,6 +1,6 @@
-# AFL++ Fuzz Testing with Rust
+# Fuzzing Rust Using `afl.rs`
 
-This repository contains a naive Rust program designed to demonstrate fuzz testing with AFL++. The example program reads input from a file, processes the data, and intentionally includes a potential out-of-bounds error. By using AFL++, we can generate crashes and identify flaws in the code, providing a practical introduction to fuzzing techniques and AFL++ usage.
+This repository contains a naive Rust program designed to demonstrate fuzz testing with afl.rs. The example program reads input from a file, processes the data, and intentionally includes a potential out-of-bounds error.
 
 ## Getting Started
 
@@ -13,7 +13,7 @@ This repository contains a naive Rust program designed to demonstrate fuzz testi
 Build the program using `cargo afl`:
 
 ```bash
-$ cd afl_sandbox
+$ cd afl.rs_sandbox
 # Build the binary using panic=abort to allow afl identify panics as crashes.
 # Check https://github.com/rust-fuzz/afl.rs/issues/499 for more context.
 $ RUSTFLAGS="-C panic=abort" cargo afl build
