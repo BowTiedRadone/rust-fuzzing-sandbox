@@ -1,0 +1,23 @@
+[package]
+name = "persistent-fuzzer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+afl = "0.15"
+rust-sut = { path = "../non_persistent" }
+
+[[bin]]
+name = "persistent-fuzzer"
+path = "src/main.rs"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+opt-level = 3
+debug = false
+strip = true
+lto = true
+codegen-units = 1
+panic = "abort"
