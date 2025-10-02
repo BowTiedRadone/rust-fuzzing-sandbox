@@ -1,0 +1,17 @@
+[package]
+name = "rust-sut"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+afl = "0.15"
+
+# Build the binary using panic=abort to allow afl identify panics as crashes.
+# Check https://github.com/rust-fuzz/afl.rs/issues/499 for more context.
+[profile.dev]
+panic = "abort"
+
+# Build the binary using panic=abort to allow afl identify panics as crashes.
+# Check https://github.com/rust-fuzz/afl.rs/issues/499 for more context.
+[profile.release]
+panic = "abort"

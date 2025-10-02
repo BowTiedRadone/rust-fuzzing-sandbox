@@ -1,61 +1,101 @@
-# Fuzzing Rust Using `afl.rs`
+# AFL++ Fuzzing Sandbox
 
-This repository contains a naive Rust program designed to demonstrate fuzz testing with afl.rs. The example program reads input from a file, processes the data, and intentionally includes a potential out-of-bounds error.
+This sandbox demonstrates fuzzing Rust code using AFL++ with two different approaches: persistent and non-persistent fuzzing. Both examples target a function with a deliberate out-of-bounds access vulnerability.
 
-## Getting Started
+## Overview
 
-### Prerequisites
+- **`non_persistent/`** - Traditional file-based fuzzing approach
+- **`persistent/`** - In-memory persistent fuzzing approach
 
-- [`afl.rs` installed](https://github.com/rust-fuzz/afl.rs)
+## Quick Start
 
-### Steps
-
-Build the program using `cargo afl`:
-
-```bash
-$ cd afl.rs_sandbox
-# Build the binary using panic=abort to allow afl identify panics as crashes.
-# Check https://github.com/rust-fuzz/afl.rs/issues/499 for more context.
-$ RUSTFLAGS="-C panic=abort" cargo afl build
-```
-
-Create an input(corpus) directory and add at least one input (seed). The sandbox already has an input directory containing a seed file:
+**Setup AFL++** (one-time setup):
 
 ```bash
-$ ls corpus/
-seed1.txt
+# Build AFL LLVM runtime for your Rust version.
+cargo afl config --build
+
+# Configure system for fuzzing (requires root).
+cargo afl system-config
 ```
 
-Test the test cases from the `corpus` directory manually:
+**Choose your approach**:
+
+- For **non-persistent fuzzing**: See [`non_persistent/README.md`](non_persistent/README.md)
+- For **persistent fuzzing**: See [`persistent/README.md`](persistent/README.md)
+
+## Understanding Fuzzing Results
+
+### Crash Analysis
+
+When AFL++ finds crashes, they're stored in `<output-dir>/default/crashes/`:
 
 ```bash
-$ cat ./corpus/seed1.txt
-test
+# List all crashes.
+ls <output-dir>/default/crashes/
 
-$ ./target/debug/afl-rust ./corpus/seed1.txt
-Buffer content: test
+# Example crash file.
+id:000000,sig:06,src:000001,time:785,execs:2493,op:havoc,rep:27
 ```
 
-Start fuzzing the binary:
+**Crash file naming format:**
+
+- `id:000000` - Unique crash identifier
+- `sig:06` - Signal number (6 = SIGABRT)
+- `src:000001` - Source test case
+- `time:785` - Time to crash (ms)
+- `execs:2493` - Executions before crash
+- `op:havoc` - Mutation operation that caused crash
+- `rep:27` - Repetition count
+
+### Reproducing Crashes
+
+**Non-persistent approach:**
 
 ```bash
-# Use 'corpus' directory as the input.
-# Store the fuzzing campaign results under an 'out' directory.
-# NOTE: '@@' allows AFL to substitute the path to each test case file.
-$ cargo afl fuzz -i corpus -o out target/debug/afl-rust @@
+./target/release/rust-sut out/default/crashes/id:000000,sig:06,src:000001,time:785,execs:2493,op:havoc,rep:27
 ```
 
-Reproduce eventual crashes stored under `out/default/crashes`:
+**Persistent approach:**
 
 ```bash
-$ ls out/default/crashes/
-id:000000,sig:06,src:000001,time:785,execs:2493,op:havoc,rep:27  README.txt
-
-$ cargo afl run out/default/crashes/id\:000000\,sig\:06\,src\:000001\,time\:785\,execs\:2493\,op\:havoc\,rep\:27
-
-$ ./target/debug/afl-rust out/default/crashes/id:000000,sig:06,src:000000,time:12345,execs:67890
+cargo afl run out/default/crashes/id:000000,sig:06,src:000001,time:785,execs:2493,op:havoc,rep:27
 ```
+
+### Fuzzing Statistics
+
+Monitor fuzzing progress in the AFL++ interface:
+
+- **exec/sec** - Executions per second
+- **cycles done** - Number of complete queue cycles
+- **uniq crashes** - Unique crashes found
+- **uniq hangs** - Unique hangs found
+
+### Performance Tips
+
+1. **Use multiple cores**: AFL++ automatically suggests parallel fuzzing
+2. **Monitor CPU usage**: Ensure high CPU utilization
+3. **Check system limits**: Verify core dumps are enabled
+4. **Use release builds**: Significantly faster execution
+
+## Common Issues
+
+### Performance Issues
+
+- Use release builds (`cargo afl build --release`)
+- Ensure adequate system resources
+- Consider using tmpfs for output directory
+
+## Next Steps
+
+- **Analyze crashes** with debuggers (gdb, lldb)
+- **Minimize test cases** using `afl-tmin`
+- **Add more seed inputs** to improve coverage
+- **Use dictionaries** for structured input formats
 
 ---
 
-Happy fuzzing!
+For detailed setup and usage instructions, see the specific READMEs:
+
+- [Non-Persistent Fuzzing](non_persistent/README.md)
+- [Persistent Fuzzing](persistent/README.md)
